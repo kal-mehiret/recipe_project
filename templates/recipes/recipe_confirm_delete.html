@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="delete-confirmation-container">
+    <div class="confirmation-card">
+        <div class="warning-icon">⚠️</div>
+        
+        <div class="confirmation-header">
+            <h2>Delete Recipe?</h2>
+            <p class="confirmation-subtitle">This action cannot be undone</p>
+        </div>
+
+        <div class="recipe-preview">
+            <div class="preview-header">
+                <h3 class="recipe-title">{{ recipe.title }}</h3>
+                <span class="recipe-category">{{ recipe.get_category_display }}</span>
+            </div>
+            
+            {% if recipe.image %}
+            <div class="preview-image">
+                <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}">
+            </div>
+            {% endif %}
+            
+            <div class="preview-meta">
+                <span class="author">By {{ recipe.author.username }}</span>
+                <span class="date">Created {{ recipe.date_created|date:"F d, Y" }}</span>
+            </div>
+        </div>
+
+        <div class="warning-message">
+            <div class="warning-item">
+                <span class="warning-icon">❌</span>
+                <span>This recipe will be permanently removed</span>
+            </div>
+            <div class="warning-item">
+                <span class="warning-icon">📊</span>
+                <span>All associated data will be lost</span>
+            </div>
+            <div class="warning-item">
+                <span class="warning-icon">👥</span>
+                <span>Other users will no longer see this recipe</span>
+            </div>
+        </div>
+
+        <form method="post" class="confirmation-form">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger">
+                    <span class="btn-icon">🗑️</span>
+                    <span class="btn-text">Yes, Delete Recipe</span>
+                </button>
+                <a href="{% url 'recipe_detail' recipe.pk %}" class="btn btn-secondary">
+                    <span class="btn-icon">←</span>
+                    <span class="btn-text">Cancel</span>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .delete-confirmation-container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .confirmation-card {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+        border: 1px solid #f1f5f9;
+        text-align: center;
+        width: 100%;
+    }
+
+    .warning-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        display: block;
+    }
+
+    .confirmation-header {
+        margin-bottom: 2rem;
+    }
+
+    .confirmation-header h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .confirmation-subtitle {
+        color: #64748b;
+        font-size: 1.1rem;
+    }
+
+    .recipe-preview {
+        background: #f8fafc;
+        border: 2px dashed #e2e8f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: left;
+    }
+
+    .preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        gap: 1rem;
+    }
+
+    .recipe-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+        flex: 1;
+    }
+
+    .recipe-category {
+        background: #dc2626;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .preview-image {
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .preview-image img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .preview-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+        color: #64748b;
+    }
+
+    .author {
+        font-weight: 500;
+        color: #475569;
+    }
+
+    .warning-message {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: left;
+    }
+
+    .warning-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .warning-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .warning-item .warning-icon {
+        font-size: 1.2rem;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+
+    .warning-item span:last-child {
+        color: #991b1b;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .confirmation-form {
+        margin-top: 2rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #dc2626, #ef4444);
+        color: white;
+        box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+    }
+
+    .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+        background: linear-gradient(135deg, #b91c1c, #dc2626);
+    }
+
+    .btn-secondary {
+        background: #f8fafc;
+        color: #64748b;
+        border: 2px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+        background: #f1f5f9;
+        color: #475569;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-icon {
+        font-size: 1.1rem;
+    }
+
+    /* Animation */
+    .confirmation-card {
+        animation: slideInUp 0.5s ease-out;
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .delete-confirmation-container {
+            padding: 1rem;
+        }
+
+        .confirmation-card {
+            padding: 2rem;
+        }
+
+        .confirmation-header h2 {
+            font-size: 1.7rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .preview-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .recipe-category {
+            align-self: flex-start;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .confirmation-card {
+            padding: 1.5rem;
+        }
+
+        .warning-icon {
+            font-size: 3rem;
+        }
+
+        .confirmation-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .recipe-preview {
+            padding: 1rem;
+        }
+
+        .preview-meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+
+        .warning-message {
+            padding: 1rem;
+        }
+    }
+
+    /* Focus states for accessibility */
+    .btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3);
+    }
+
+    .btn-secondary:focus {
+        box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.3);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add confirmation dialog enhancement
+        const deleteForm = document.querySelector('.confirmation-form');
+        const deleteButton = document.querySelector('.btn-danger');
+        
+        deleteButton.addEventListener('click', function(e) {
+            // Add a small delay to show the button press effect
+            this.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+        });
+
+        // Prevent accidental form submission
+        let formSubmitted = false;
+        deleteForm.addEventListener('submit', function(e) {
+            if (!formSubmitted) {
+                formSubmitted = true;
+                deleteButton.innerHTML = `
+                    <span class="btn-icon">⏳</span>
+                    <span class="btn-text">Deleting...</span>
+                `;
+                deleteButton.disabled = true;
+            } else {
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+{% endblock %}
